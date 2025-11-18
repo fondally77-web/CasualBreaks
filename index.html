@@ -3,130 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>カラーメモリー - 短時間暇つぶしゲーム</title>
-    <link rel="stylesheet" href="style.css">
+    <title>CasualBreaks - スマホ依存にならない暇つぶしゲーム集</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', 'Hiragino Sans', 'Meiryo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+        }
+
+        .description {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #555;
+            font-size: 1.1em;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .game-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .game-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .game-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .game-description {
+            font-size: 0.95em;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .game-features {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        .game-features li {
+            font-size: 0.9em;
+            color: #888;
+            margin: 5px 0;
+        }
+
+        .game-features li::before {
+            content: "✓ ";
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .anti-addiction-note {
+            background: #e8f5e9;
+            border-left: 4px solid #2e7d32;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .anti-addiction-note h3 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .anti-addiction-note p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .game-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🎨 カラーメモリー</h1>
-            <p class="subtitle">色の順番を覚えよう！</p>
+            <h1>🎮 CasualBreaks</h1>
+            <p class="subtitle">スマホ依存にならない暇つぶしゲーム集</p>
         </header>
 
-        <!-- モード選択画面 -->
-        <div class="mode-selection" id="modeSelection">
-            <h2>ゲームモードを選択</h2>
-            <div class="mode-buttons">
-                <button class="mode-btn" id="singlePlayerBtn">
-                    <span class="mode-icon">👤</span>
-                    <span class="mode-title">1人プレイ</span>
-                    <span class="mode-desc">自分のベストを目指す</span>
-                </button>
-                <button class="mode-btn" id="multiPlayerBtn">
-                    <span class="mode-icon">👥</span>
-                    <span class="mode-title">みんなでプレイ</span>
-                    <span class="mode-desc">交代で競い合おう</span>
-                </button>
-            </div>
+        <div class="description">
+            <p>短時間で楽しめる、健全な暇つぶしゲームをお楽しみください。</p>
         </div>
 
-        <!-- 難易度選択画面 -->
-        <div class="difficulty-selection" id="difficultySelection" style="display: none;">
-            <h2>難易度を選択</h2>
-            <div class="difficulty-buttons">
-                <button class="difficulty-btn easy" data-difficulty="easy">
-                    <span class="difficulty-icon">😊</span>
-                    <span class="difficulty-title">イージー</span>
-                    <span class="difficulty-desc">10ラウンド・4色・ゆっくり</span>
-                </button>
-                <button class="difficulty-btn normal" data-difficulty="normal">
-                    <span class="difficulty-icon">🙂</span>
-                    <span class="difficulty-title">ノーマル</span>
-                    <span class="difficulty-desc">15ラウンド・4色・普通</span>
-                </button>
-                <button class="difficulty-btn hard" data-difficulty="hard">
-                    <span class="difficulty-icon">😤</span>
-                    <span class="difficulty-title">ハード</span>
-                    <span class="difficulty-desc">20ラウンド・6色・速い</span>
-                </button>
-            </div>
-            <button class="btn btn-back" id="backToModeFromDifficultyBtn">戻る</button>
-        </div>
-
-        <!-- プレイヤー設定画面 -->
-        <div class="player-setup" id="playerSetup" style="display: none;">
-            <h2>プレイヤー設定</h2>
-            <div class="player-count">
-                <label>人数を選択:</label>
-                <select id="playerCount">
-                    <option value="2">2人</option>
-                    <option value="3">3人</option>
-                    <option value="4">4人</option>
-                </select>
-            </div>
-            <div class="player-names" id="playerNames"></div>
-            <button class="btn btn-start" id="startMultiplayerBtn">ゲーム開始</button>
-            <button class="btn btn-back" id="backToModeBtn">戻る</button>
-        </div>
-
-        <!-- ゲーム画面 -->
-        <div class="game-screen" id="gameScreen" style="display: none;">
-            <!-- 現在のプレイヤー表示 -->
-            <div class="current-player" id="currentPlayerDisplay" style="display: none;">
-                <span class="player-label">プレイヤー:</span>
-                <span class="player-name" id="currentPlayerName"></span>
-            </div>
-
-            <div class="game-info">
-                <div class="info-item">
-                    <span class="label">ラウンド</span>
-                    <span class="value" id="round">1</span>
-                </div>
-                <div class="info-item">
-                    <span class="label">スコア</span>
-                    <span class="value" id="score">0</span>
-                </div>
-                <div class="info-item">
-                    <span class="label">最高記録</span>
-                    <span class="value" id="highscore">0</span>
-                </div>
-            </div>
-
-            <div class="message" id="message">スタートを押してね！</div>
-
-            <div class="color-grid" id="colorGrid">
-                <button class="color-button red" data-color="red"></button>
-                <button class="color-button blue" data-color="blue"></button>
-                <button class="color-button green" data-color="green"></button>
-                <button class="color-button yellow" data-color="yellow"></button>
-                <button class="color-button purple extra-color" data-color="purple" style="display: none;"></button>
-                <button class="color-button orange extra-color" data-color="orange" style="display: none;"></button>
-            </div>
-
-            <div class="controls">
-                <button class="btn btn-start" id="startBtn">スタート</button>
-                <button class="btn btn-reset" id="resetBtn" style="display: none;">もう一度</button>
-            </div>
-
-            <!-- リーダーボード（マルチプレイヤー用） -->
-            <div class="leaderboard" id="leaderboard" style="display: none;">
-                <h3>スコアボード</h3>
-                <div class="leaderboard-list" id="leaderboardList"></div>
-            </div>
-
-            <div class="game-rules">
-                <h3>遊び方</h3>
-                <ul>
-                    <li>光る色の順番を覚えよう</li>
-                    <li>同じ順番で色をタップ</li>
-                    <li>ラウンドごとに1色増える</li>
-                    <li>10ラウンドでクリア！</li>
+        <div class="game-grid">
+            <a href="color-memory.html" class="game-card">
+                <div class="game-icon">🎨</div>
+                <div class="game-title">カラーメモリー</div>
+                <div class="game-description">色の順番を覚えて繰り返すメモリーゲーム</div>
+                <ul class="game-features">
+                    <li>3段階の難易度</li>
+                    <li>1人 or 2〜4人プレイ</li>
+                    <li>記憶力トレーニング</li>
                 </ul>
-                <p class="anti-addiction">⏱️ 短時間で終わる設計で、スマホ依存を防止</p>
-            </div>
+            </a>
+
+            <a href="tissue-pull.html" class="game-card">
+                <div class="game-icon">🧻</div>
+                <div class="game-title">ティッシュ引っ張り</div>
+                <div class="game-description">ひたすらティッシュを引っ張る爽快ゲーム</div>
+                <ul class="game-features">
+                    <li>時間制限モード</li>
+                    <li>シンプル操作</li>
+                    <li>見ていてスッキリ</li>
+                </ul>
+            </a>
+        </div>
+
+        <div class="anti-addiction-note">
+            <h3>🛡️ スマホ依存防止の工夫</h3>
+            <p>
+                全てのゲームは明確な終了ポイントがあり、短時間で満足感が得られる設計です。
+                課金要素や継続プレイの誘導は一切ありません。
+                健全な暇つぶしをお楽しみください。
+            </p>
         </div>
     </div>
-
-    <script src="game.js"></script>
 </body>
 </html>

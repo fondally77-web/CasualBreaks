@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ティッシュ引っ張り - 爽快暇つぶしゲーム</title>
+    <link rel="stylesheet" href="tissue-style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧻 ティッシュ引っ張り</h1>
+            <p class="subtitle">ひたすら引っ張ってスッキリ！</p>
+        </header>
+
+        <!-- スタート画面 -->
+        <div class="start-screen" id="startScreen">
+            <div class="game-description">
+                <p>時間内にティッシュを引っ張り続けよう！</p>
+                <p>クリック/タップで引っ張れます</p>
+            </div>
+            <div class="time-options">
+                <h3>プレイ時間を選択</h3>
+                <div class="time-buttons">
+                    <button class="time-btn" data-time="30">30秒</button>
+                    <button class="time-btn" data-time="60">60秒</button>
+                    <button class="time-btn" data-time="120">2分</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ゲーム画面 -->
+        <div class="game-screen" id="gameScreen" style="display: none;">
+            <div class="game-info">
+                <div class="info-item">
+                    <span class="label">残り時間</span>
+                    <span class="value timer" id="timer">60</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">引っ張った枚数</span>
+                    <span class="value" id="count">0</span>
+                </div>
+            </div>
+
+            <div class="tissue-container">
+                <div class="tissue-box">
+                    <div class="box-top"></div>
+                    <div class="box-front">
+                        <div class="box-label">TISSUE</div>
+                    </div>
+                    <div class="box-side-left"></div>
+                    <div class="box-side-right"></div>
+
+                    <!-- ティッシュの出口 -->
+                    <div class="tissue-slot">
+                        <div class="tissue-visible" id="tissueVisible">
+                            <div class="tissue-sheet"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 引っ張られたティッシュのアニメーション用 -->
+                <div id="pulledTissues"></div>
+            </div>
+
+            <div class="pull-button-area">
+                <button class="pull-btn" id="pullBtn">
+                    <span class="pull-text">引っ張る！</span>
+                    <span class="pull-icon">👆</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 結果画面 -->
+        <div class="result-screen" id="resultScreen" style="display: none;">
+            <h2>結果発表！</h2>
+            <div class="result-count">
+                <span class="result-number" id="resultCount">0</span>
+                <span class="result-label">枚</span>
+            </div>
+            <div class="result-message" id="resultMessage"></div>
+            <button class="btn-restart" id="restartBtn">もう一度</button>
+        </div>
+    </div>
+
+    <script src="tissue-game.js"></script>
+</body>
+</html>
