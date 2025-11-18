@@ -7,22 +7,87 @@ const gameState = {
     isPlaying: false,
     isShowingSequence: false,
     maxRounds: 10,
-    highScore: 0
+    highScore: 0,
+    // マルチプレイヤー用
+    isMultiplayer: false,
+    players: [],
+    currentPlayerIndex: 0,
+    playerScores: []
 };
 
 // DOM要素の取得
 const elements = {
+    // 画面
+    modeSelection: document.getElementById('modeSelection'),
+    playerSetup: document.getElementById('playerSetup'),
+    gameScreen: document.getElementById('gameScreen'),
+
+    // モード選択
+    singlePlayerBtn: document.getElementById('singlePlayerBtn'),
+    multiPlayerBtn: document.getElementById('multiPlayerBtn'),
+
+    // プレイヤー設定
+    playerCount: document.getElementById('playerCount'),
+    playerNames: document.getElementById('playerNames'),
+    startMultiplayerBtn: document.getElementById('startMultiplayerBtn'),
+    backToModeBtn: document.getElementById('backToModeBtn'),
+
+    // ゲーム画面
+    currentPlayerDisplay: document.getElementById('currentPlayerDisplay'),
+    currentPlayerName: document.getElementById('currentPlayerName'),
     colorButtons: document.querySelectorAll('.color-button'),
     startBtn: document.getElementById('startBtn'),
     resetBtn: document.getElementById('resetBtn'),
     message: document.getElementById('message'),
     round: document.getElementById('round'),
     score: document.getElementById('score'),
-    highscore: document.getElementById('highscore')
+    highscore: document.getElementById('highscore'),
+    leaderboard: document.getElementById('leaderboard'),
+    leaderboardList: document.getElementById('leaderboardList')
 };
 
 // 色の配列
 const colors = ['red', 'blue', 'green', 'yellow'];
+
+// ===== 画面遷移関数 =====
+
+function showModeSelection() {
+    elements.modeSelection.style.display = 'block';
+    elements.playerSetup.style.display = 'none';
+    elements.gameScreen.style.display = 'none';
+}
+
+function showPlayerSetup() {
+    elements.modeSelection.style.display = 'none';
+    elements.playerSetup.style.display = 'block';
+    elements.gameScreen.style.display = 'none';
+    generatePlayerInputs();
+}
+
+function showGameScreen() {
+    elements.modeSelection.style.display = 'none';
+    elements.playerSetup.style.display = 'none';
+    elements.gameScreen.style.display = 'block';
+}
+
+// ===== プレイヤー設定関数 =====
+
+function generatePlayerInputs() {
+    const count = parseInt(elements.playerCount.value);
+    elements.playerNames.innerHTML = '';
+
+    for (let i = 0; i < count; i++) {
+        const div = document.createElement('div');
+        div.className = 'player-input';
+        div.innerHTML = `
+            <label>プレイヤー${i + 1}:</label>
+            <input type="text" id="player${i}" placeholder="名前を入力" value="プレイヤー${i + 1}">
+        `;
+        elements.playerNames.appendChild(div);
+    }
+}
+
+// ===== ゲーム関数 =====
 
 // ローカルストレージから最高記録を読み込む
 function loadHighScore() {
@@ -74,7 +139,13 @@ async function showSequence() {
 
     gameState.isShowingSequence = false;
     disableColorButtons(false);
-    showMessage('あなたの番です！', '');
+
+    if (gameState.isMultiplayer) {
+        const playerName = gameState.players[gameState.currentPlayerIndex];
+        showMessage(`${playerName}さんの番です！`, '');
+    } else {
+        showMessage('あなたの番です！', '');
+    }
 }
 
 // ボタンをハイライト
@@ -138,7 +209,11 @@ function checkPlayerInput(color) {
     // 正しい色かチェック
     if (color !== gameState.sequence[currentIndex]) {
         // 間違い
-        gameOver();
+        if (gameState.isMultiplayer) {
+            multiplayerGameOver();
+        } else {
+            gameOver();
+        }
         return;
     }
 
@@ -150,7 +225,11 @@ function checkPlayerInput(color) {
 
         if (gameState.round >= gameState.maxRounds) {
             // ゲームクリア
-            gameComplete();
+            if (gameState.isMultiplayer) {
+                multiplayerRoundComplete();
+            } else {
+                gameComplete();
+            }
         } else {
             // 次のラウンドへ
             nextRound();
@@ -172,7 +251,7 @@ async function nextRound() {
     await showSequence();
 }
 
-// ゲームオーバー
+// ゲームオーバー（シングルプレイヤー）
 async function gameOver() {
     gameState.isPlaying = false;
     disableColorButtons(true);
@@ -183,7 +262,7 @@ async function gameOver() {
     elements.resetBtn.style.display = 'block';
 }
 
-// ゲームクリア
+// ゲームクリア（シングルプレイヤー）
 async function gameComplete() {
     gameState.isPlaying = false;
     disableColorButtons(true);
@@ -194,16 +273,189 @@ async function gameComplete() {
     elements.resetBtn.style.display = 'block';
 }
 
-// ゲーム開始
-async function startGame() {
+// ===== マルチプレイヤー関数 =====
+
+// マルチプレイヤーゲームオーバー
+async function multiplayerGameOver() {
+    // 現在のプレイヤーのスコアを記録
+    gameState.playerScores[gameState.currentPlayerIndex] = gameState.score;
+
+    disableColorButtons(true);
+    const playerName = gameState.players[gameState.currentPlayerIndex];
+    showMessage(`${playerName}さん終了！スコア: ${gameState.score}`, 'error');
+
+    await sleep(2000);
+
+    // 次のプレイヤーへ
+    gameState.currentPlayerIndex++;
+
+    if (gameState.currentPlayerIndex >= gameState.players.length) {
+        // 全員終了
+        showFinalResults();
+    } else {
+        // 次のプレイヤーのターン
+        startNextPlayerTurn();
+    }
+}
+
+// ラウンド完了（マルチプレイヤー）
+async function multiplayerRoundComplete() {
+    // 現在のプレイヤーのスコアを記録（完走）
+    gameState.playerScores[gameState.currentPlayerIndex] = gameState.score;
+
+    disableColorButtons(true);
+    const playerName = gameState.players[gameState.currentPlayerIndex];
+    showMessage(`🎊 ${playerName}さん全クリア！スコア: ${gameState.score}`, 'success');
+
+    await sleep(3000);
+
+    // 次のプレイヤーへ
+    gameState.currentPlayerIndex++;
+
+    if (gameState.currentPlayerIndex >= gameState.players.length) {
+        // 全員終了
+        showFinalResults();
+    } else {
+        // 次のプレイヤーのターン
+        startNextPlayerTurn();
+    }
+}
+
+// 次のプレイヤーのターン開始
+async function startNextPlayerTurn() {
+    const playerName = gameState.players[gameState.currentPlayerIndex];
+    elements.currentPlayerName.textContent = playerName;
+
+    // ゲーム状態をリセット
+    gameState.sequence = [];
+    gameState.playerSequence = [];
+    gameState.round = 1;
+    gameState.score = 0;
+
+    updateDisplay();
+    updateLeaderboard();
+
+    showMessage(`${playerName}さんの準備をしてね！`, '');
+    await sleep(2000);
+
+    showMessage('ゲームスタート！', '');
+    await sleep(1000);
+
+    addColorToSequence();
+    await showSequence();
+}
+
+// リーダーボードの更新
+function updateLeaderboard() {
+    elements.leaderboardList.innerHTML = '';
+
+    // スコアと名前のペアを作成
+    const scores = gameState.players.map((name, index) => ({
+        name: name,
+        score: gameState.playerScores[index] || 0,
+        isPlaying: index === gameState.currentPlayerIndex
+    }));
+
+    // スコアでソート
+    scores.sort((a, b) => b.score - a.score);
+
+    // リーダーボード表示
+    scores.forEach((player, index) => {
+        const item = document.createElement('div');
+        item.className = `leaderboard-item ${index < 3 ? 'rank-' + (index + 1) : ''}`;
+
+        const rankEmojis = ['🥇', '🥈', '🥉'];
+        const rankBadge = index < 3 ? rankEmojis[index] : `${index + 1}位`;
+
+        item.innerHTML = `
+            <div class="player-info">
+                <span class="rank-badge">${rankBadge}</span>
+                <span class="player-name-leaderboard">${player.name}${player.isPlaying ? ' ▶' : ''}</span>
+            </div>
+            <span class="player-score">${player.score}</span>
+        `;
+
+        elements.leaderboardList.appendChild(item);
+    });
+}
+
+// 最終結果の表示
+function showFinalResults() {
+    elements.currentPlayerDisplay.style.display = 'none';
+    updateLeaderboard();
+
+    // 優勝者を探す
+    const maxScore = Math.max(...gameState.playerScores);
+    const winnerIndex = gameState.playerScores.indexOf(maxScore);
+    const winner = gameState.players[winnerIndex];
+
+    showMessage(`🏆 優勝: ${winner}さん！スコア: ${maxScore}`, 'success');
+
+    elements.startBtn.style.display = 'none';
+    elements.resetBtn.style.display = 'block';
+}
+
+// ===== ゲーム開始関数 =====
+
+// シングルプレイヤーゲーム開始
+async function startSinglePlayerGame() {
+    gameState.isMultiplayer = false;
     gameState.sequence = [];
     gameState.playerSequence = [];
     gameState.round = 1;
     gameState.score = 0;
     gameState.isPlaying = true;
 
+    elements.currentPlayerDisplay.style.display = 'none';
+    elements.leaderboard.style.display = 'none';
+
+    showGameScreen();
     updateDisplay();
     elements.startBtn.style.display = 'none';
+
+    showMessage('ゲームスタート！', '');
+    await sleep(1000);
+
+    addColorToSequence();
+    await showSequence();
+}
+
+// マルチプレイヤーゲーム開始
+async function startMultiPlayerGame() {
+    // プレイヤー名を取得
+    const playerCount = parseInt(elements.playerCount.value);
+    gameState.players = [];
+
+    for (let i = 0; i < playerCount; i++) {
+        const input = document.getElementById(`player${i}`);
+        const name = input.value.trim() || `プレイヤー${i + 1}`;
+        gameState.players.push(name);
+    }
+
+    gameState.isMultiplayer = true;
+    gameState.currentPlayerIndex = 0;
+    gameState.playerScores = new Array(playerCount).fill(0);
+
+    gameState.sequence = [];
+    gameState.playerSequence = [];
+    gameState.round = 1;
+    gameState.score = 0;
+    gameState.isPlaying = true;
+
+    showGameScreen();
+
+    elements.currentPlayerDisplay.style.display = 'block';
+    elements.leaderboard.style.display = 'block';
+    elements.startBtn.style.display = 'none';
+
+    const playerName = gameState.players[0];
+    elements.currentPlayerName.textContent = playerName;
+
+    updateDisplay();
+    updateLeaderboard();
+
+    showMessage(`${playerName}さんの準備をしてね！`, '');
+    await sleep(2000);
 
     showMessage('ゲームスタート！', '');
     await sleep(1000);
@@ -215,13 +467,34 @@ async function startGame() {
 // リセット
 function resetGame() {
     elements.resetBtn.style.display = 'none';
-    elements.startBtn.style.display = 'block';
-    showMessage('スタートを押してね！', '');
     disableColorButtons(true);
+    showModeSelection();
 }
 
-// イベントリスナーの設定
-elements.startBtn.addEventListener('click', startGame);
+// ===== イベントリスナーの設定 =====
+
+// モード選択
+elements.singlePlayerBtn.addEventListener('click', () => {
+    startSinglePlayerGame();
+});
+
+elements.multiPlayerBtn.addEventListener('click', () => {
+    showPlayerSetup();
+});
+
+// プレイヤー設定
+elements.playerCount.addEventListener('change', generatePlayerInputs);
+
+elements.startMultiplayerBtn.addEventListener('click', () => {
+    startMultiPlayerGame();
+});
+
+elements.backToModeBtn.addEventListener('click', () => {
+    showModeSelection();
+});
+
+// ゲーム操作
+elements.startBtn.addEventListener('click', startSinglePlayerGame);
 elements.resetBtn.addEventListener('click', resetGame);
 
 elements.colorButtons.forEach(button => {
@@ -239,3 +512,4 @@ elements.colorButtons.forEach(button => {
 // 初期化
 loadHighScore();
 disableColorButtons(true);
+showModeSelection();

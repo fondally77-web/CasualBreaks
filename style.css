@@ -264,3 +264,248 @@ h1 {
 .pulse {
     animation: pulse 0.5s ease-in-out;
 }
+
+/* モード選択画面 */
+.mode-selection {
+    margin-bottom: 25px;
+}
+
+.mode-selection h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+.mode-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.mode-btn {
+    background: white;
+    border: 3px solid #667eea;
+    border-radius: 15px;
+    padding: 25px 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.mode-btn:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+}
+
+.mode-btn:hover .mode-icon,
+.mode-btn:hover .mode-title,
+.mode-btn:hover .mode-desc {
+    color: white;
+}
+
+.mode-icon {
+    font-size: 3em;
+}
+
+.mode-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+}
+
+.mode-desc {
+    font-size: 0.9em;
+    color: #666;
+    text-align: center;
+}
+
+/* プレイヤー設定画面 */
+.player-setup {
+    margin-bottom: 25px;
+}
+
+.player-setup h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+.player-count {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.player-count label {
+    display: block;
+    margin-bottom: 10px;
+    color: #555;
+    font-weight: bold;
+}
+
+.player-count select {
+    padding: 10px 20px;
+    font-size: 1.1em;
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    cursor: pointer;
+    background: white;
+    color: #333;
+}
+
+.player-names {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.player-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.player-input label {
+    min-width: 100px;
+    font-weight: bold;
+    color: #555;
+}
+
+.player-input input {
+    flex: 1;
+    padding: 12px;
+    font-size: 1em;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
+}
+
+.player-input input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.btn-back {
+    background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+    color: white;
+    flex: 1;
+    margin-top: 10px;
+}
+
+.btn-back:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(127, 140, 141, 0.4);
+}
+
+/* 現在のプレイヤー表示 */
+.current-player {
+    text-align: center;
+    padding: 15px;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    color: white;
+}
+
+.player-label {
+    font-size: 0.9em;
+    opacity: 0.9;
+}
+
+.player-name {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+/* リーダーボード */
+.leaderboard {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border-left: 4px solid #667eea;
+}
+
+.leaderboard h3 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    text-align: center;
+}
+
+.leaderboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.leaderboard-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: white;
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+    transition: all 0.3s ease;
+}
+
+.leaderboard-item.rank-1 {
+    border-color: #ffd700;
+    background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);
+}
+
+.leaderboard-item.rank-2 {
+    border-color: #c0c0c0;
+    background: linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%);
+}
+
+.leaderboard-item.rank-3 {
+    border-color: #cd7f32;
+    background: linear-gradient(135deg, #fff0e6 0%, #fff5ed 100%);
+}
+
+.player-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.rank-badge {
+    font-size: 1.5em;
+    min-width: 35px;
+    text-align: center;
+}
+
+.player-name-leaderboard {
+    font-weight: bold;
+    color: #333;
+}
+
+.player-score {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #667eea;
+}
+
+@media (max-width: 480px) {
+    .mode-buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .player-input {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .player-input label {
+        min-width: auto;
+    }
+}
