@@ -182,7 +182,7 @@ const dragState = {
     isDragging: false,
     startY: 0,
     currentY: 0,
-    dragThreshold: 50 // ドラッグ距離の閾値
+    dragThreshold: 30 // ドラッグ距離の閾値（モバイル対応で低めに設定）
 };
 
 // マウスドラッグ（PC用）
@@ -230,11 +230,12 @@ elements.tissueVisible.addEventListener('touchstart', (e) => {
     dragState.startY = e.touches[0].clientY;
     dragState.currentY = e.touches[0].clientY;
     e.preventDefault();
-});
+}, { passive: false });
 
-document.addEventListener('touchmove', (e) => {
+elements.tissueVisible.addEventListener('touchmove', (e) => {
     if (!dragState.isDragging || !gameState.isPlaying) return;
 
+    e.preventDefault();
     dragState.currentY = e.touches[0].clientY;
     const distance = dragState.startY - dragState.currentY;
 
@@ -249,9 +250,9 @@ document.addEventListener('touchmove', (e) => {
         dragState.isDragging = false;
         elements.tissueVisible.style.transform = '';
     }
-});
+}, { passive: false });
 
-document.addEventListener('touchend', () => {
+elements.tissueVisible.addEventListener('touchend', () => {
     if (dragState.isDragging) {
         dragState.isDragging = false;
         elements.tissueVisible.style.transform = '';

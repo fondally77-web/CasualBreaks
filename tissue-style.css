@@ -220,7 +220,8 @@ h1 {
     height: 100%;
     user-select: none;
     -webkit-user-select: none;
-    touch-action: none;
+    touch-action: pan-y;
+    cursor: grab;
 }
 
 .tissue-visible:hover .tissue-sheet {
@@ -230,28 +231,47 @@ h1 {
 
 .tissue-sheet {
     position: absolute;
-    width: 100px;
-    height: 80px;
-    background: white;
-    border: 2px solid #e0e0e0;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    top: -40px;
+    width: 110px;
+    height: 70px;
+    background: linear-gradient(to bottom, #ffffff 0%, #f8f8f8 100%);
+    border: 2px solid #d0d0d0;
+    border-radius: 3px;
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.1),
+        inset 0 1px 2px rgba(255, 255, 255, 0.8);
+    top: -35px;
     left: 50%;
     transform: translateX(-50%);
     transition: all 0.2s ease;
     pointer-events: none;
 }
 
+/* ティッシュの質感を表現 */
 .tissue-sheet::before {
     content: '';
     position: absolute;
-    top: 10px;
-    left: 10px;
-    right: 10px;
-    bottom: 10px;
-    border: 1px dashed #ccc;
-    border-radius: 3px;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    border: 1px dashed rgba(200, 200, 200, 0.4);
+    border-radius: 2px;
+}
+
+/* 重なったティッシュを表現 */
+.tissue-sheet::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 5%;
+    right: 5%;
+    height: 4px;
+    background: linear-gradient(to right,
+        transparent 0%,
+        rgba(0,0,0,0.05) 20%,
+        rgba(0,0,0,0.05) 80%,
+        transparent 100%);
+    border-radius: 2px;
 }
 
 /* 引っ張られるティッシュアニメーション */
