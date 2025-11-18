@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カラーメモリー - 短時間暇つぶしゲーム</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 カラーメモリー</h1>
+            <p class="subtitle">色の順番を覚えよう！</p>
+        </header>
+
+        <div class="game-info">
+            <div class="info-item">
+                <span class="label">ラウンド</span>
+                <span class="value" id="round">1</span>
+            </div>
+            <div class="info-item">
+                <span class="label">スコア</span>
+                <span class="value" id="score">0</span>
+            </div>
+            <div class="info-item">
+                <span class="label">最高記録</span>
+                <span class="value" id="highscore">0</span>
+            </div>
+        </div>
+
+        <div class="message" id="message">スタートを押してね！</div>
+
+        <div class="color-grid" id="colorGrid">
+            <button class="color-button red" data-color="red"></button>
+            <button class="color-button blue" data-color="blue"></button>
+            <button class="color-button green" data-color="green"></button>
+            <button class="color-button yellow" data-color="yellow"></button>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-start" id="startBtn">スタート</button>
+            <button class="btn btn-reset" id="resetBtn" style="display: none;">もう一度</button>
+        </div>
+
+        <div class="game-rules">
+            <h3>遊び方</h3>
+            <ul>
+                <li>光る色の順番を覚えよう</li>
+                <li>同じ順番で色をタップ</li>
+                <li>ラウンドごとに1色増える</li>
+                <li>10ラウンドでクリア！</li>
+            </ul>
+            <p class="anti-addiction">⏱️ 短時間で終わる設計で、スマホ依存を防止</p>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
