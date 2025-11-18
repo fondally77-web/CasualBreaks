@@ -12,7 +12,6 @@ body {
     justify-content: center;
     align-items: center;
     padding: 20px;
-    overflow: hidden;
 }
 
 .container {
@@ -423,6 +422,10 @@ h1 {
 
     h1 {
         font-size: 2em;
+    }
+
+    .tissue-container {
+        height: 280px;
     }
 
     .tissue-box {
