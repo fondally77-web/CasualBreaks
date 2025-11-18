@@ -140,6 +140,19 @@ h1 {
     background: linear-gradient(135deg, #ffd93d 0%, #fcbf49 100%);
 }
 
+.color-button.purple {
+    background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+}
+
+.color-button.orange {
+    background: linear-gradient(135deg, #fab1a0 0%, #ff7675 100%);
+}
+
+/* ハードモード用：6色グリッド */
+.color-grid.hard-mode {
+    grid-template-columns: repeat(3, 1fr);
+}
+
 .color-button.active {
     transform: scale(0.95);
     filter: brightness(1.5);
@@ -322,6 +335,93 @@ h1 {
     font-size: 0.9em;
     color: #666;
     text-align: center;
+}
+
+/* 難易度選択画面 */
+.difficulty-selection {
+    margin-bottom: 25px;
+}
+
+.difficulty-selection h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+.difficulty-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.difficulty-btn {
+    background: white;
+    border: 3px solid #667eea;
+    border-radius: 15px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.difficulty-btn.easy {
+    border-color: #2ecc71;
+}
+
+.difficulty-btn.normal {
+    border-color: #f39c12;
+}
+
+.difficulty-btn.hard {
+    border-color: #e74c3c;
+}
+
+.difficulty-btn:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.difficulty-btn.easy:hover {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.4);
+}
+
+.difficulty-btn.normal:hover {
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+    box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4);
+}
+
+.difficulty-btn.hard:hover {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+}
+
+.difficulty-btn:hover .difficulty-icon,
+.difficulty-btn:hover .difficulty-title,
+.difficulty-btn:hover .difficulty-desc {
+    color: white;
+}
+
+.difficulty-icon {
+    font-size: 2.5em;
+    min-width: 60px;
+    text-align: center;
+}
+
+.difficulty-title {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #333;
+    min-width: 100px;
+}
+
+.difficulty-desc {
+    font-size: 0.9em;
+    color: #666;
+    flex: 1;
 }
 
 /* プレイヤー設定画面 */

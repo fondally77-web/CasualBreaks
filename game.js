@@ -1,3 +1,28 @@
+// 難易度設定
+const difficultySettings = {
+    easy: {
+        maxRounds: 10,
+        colors: ['red', 'blue', 'green', 'yellow'],
+        displayDelay: 1000,
+        highlightDuration: 500,
+        betweenDelay: 300
+    },
+    normal: {
+        maxRounds: 15,
+        colors: ['red', 'blue', 'green', 'yellow'],
+        displayDelay: 700,
+        highlightDuration: 400,
+        betweenDelay: 200
+    },
+    hard: {
+        maxRounds: 20,
+        colors: ['red', 'blue', 'green', 'yellow', 'purple', 'orange'],
+        displayDelay: 500,
+        highlightDuration: 300,
+        betweenDelay: 150
+    }
+};
+
 // ゲーム状態管理
 const gameState = {
     sequence: [],
@@ -8,6 +33,9 @@ const gameState = {
     isShowingSequence: false,
     maxRounds: 10,
     highScore: 0,
+    // 難易度
+    difficulty: 'easy',
+    currentColors: ['red', 'blue', 'green', 'yellow'],
     // マルチプレイヤー用
     isMultiplayer: false,
     players: [],
@@ -19,12 +47,17 @@ const gameState = {
 const elements = {
     // 画面
     modeSelection: document.getElementById('modeSelection'),
+    difficultySelection: document.getElementById('difficultySelection'),
     playerSetup: document.getElementById('playerSetup'),
     gameScreen: document.getElementById('gameScreen'),
 
     // モード選択
     singlePlayerBtn: document.getElementById('singlePlayerBtn'),
     multiPlayerBtn: document.getElementById('multiPlayerBtn'),
+
+    // 難易度選択
+    difficultyButtons: document.querySelectorAll('.difficulty-btn'),
+    backToModeFromDifficultyBtn: document.getElementById('backToModeFromDifficultyBtn'),
 
     // プレイヤー設定
     playerCount: document.getElementById('playerCount'),
@@ -35,7 +68,9 @@ const elements = {
     // ゲーム画面
     currentPlayerDisplay: document.getElementById('currentPlayerDisplay'),
     currentPlayerName: document.getElementById('currentPlayerName'),
+    colorGrid: document.getElementById('colorGrid'),
     colorButtons: document.querySelectorAll('.color-button'),
+    extraColors: document.querySelectorAll('.extra-color'),
     startBtn: document.getElementById('startBtn'),
     resetBtn: document.getElementById('resetBtn'),
     message: document.getElementById('message'),
@@ -46,19 +81,25 @@ const elements = {
     leaderboardList: document.getElementById('leaderboardList')
 };
 
-// 色の配列
-const colors = ['red', 'blue', 'green', 'yellow'];
-
 // ===== 画面遷移関数 =====
 
 function showModeSelection() {
     elements.modeSelection.style.display = 'block';
+    elements.difficultySelection.style.display = 'none';
+    elements.playerSetup.style.display = 'none';
+    elements.gameScreen.style.display = 'none';
+}
+
+function showDifficultySelection() {
+    elements.modeSelection.style.display = 'none';
+    elements.difficultySelection.style.display = 'block';
     elements.playerSetup.style.display = 'none';
     elements.gameScreen.style.display = 'none';
 }
 
 function showPlayerSetup() {
     elements.modeSelection.style.display = 'none';
+    elements.difficultySelection.style.display = 'none';
     elements.playerSetup.style.display = 'block';
     elements.gameScreen.style.display = 'none';
     generatePlayerInputs();
@@ -66,8 +107,28 @@ function showPlayerSetup() {
 
 function showGameScreen() {
     elements.modeSelection.style.display = 'none';
+    elements.difficultySelection.style.display = 'none';
     elements.playerSetup.style.display = 'none';
     elements.gameScreen.style.display = 'block';
+}
+
+// ===== 難易度設定関数 =====
+
+function applyDifficulty(difficulty) {
+    gameState.difficulty = difficulty;
+    const settings = difficultySettings[difficulty];
+
+    gameState.maxRounds = settings.maxRounds;
+    gameState.currentColors = settings.colors;
+
+    // ハードモードの場合、追加の色を表示
+    if (difficulty === 'hard') {
+        elements.extraColors.forEach(btn => btn.style.display = 'block');
+        elements.colorGrid.classList.add('hard-mode');
+    } else {
+        elements.extraColors.forEach(btn => btn.style.display = 'none');
+        elements.colorGrid.classList.remove('hard-mode');
+    }
 }
 
 // ===== プレイヤー設定関数 =====
@@ -119,22 +180,25 @@ function showMessage(text, type = '') {
 
 // ランダムな色を追加
 function addColorToSequence() {
-    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    const currentColors = gameState.currentColors;
+    const randomColor = currentColors[Math.floor(Math.random() * currentColors.length)];
     gameState.sequence.push(randomColor);
 }
 
 // シーケンスの表示
 async function showSequence() {
+    const settings = difficultySettings[gameState.difficulty];
+
     gameState.isShowingSequence = true;
     disableColorButtons(true);
     showMessage('よく見てね...', '');
 
-    await sleep(1000);
+    await sleep(settings.displayDelay);
 
     for (let i = 0; i < gameState.sequence.length; i++) {
         const color = gameState.sequence[i];
-        await highlightButton(color);
-        await sleep(300);
+        await highlightButton(color, settings.highlightDuration);
+        await sleep(settings.betweenDelay);
     }
 
     gameState.isShowingSequence = false;
@@ -149,7 +213,7 @@ async function showSequence() {
 }
 
 // ボタンをハイライト
-function highlightButton(color) {
+function highlightButton(color, duration = 500) {
     return new Promise(resolve => {
         const button = document.querySelector(`[data-color="${color}"]`);
         button.classList.add('active');
@@ -158,7 +222,7 @@ function highlightButton(color) {
         setTimeout(() => {
             button.classList.remove('active');
             resolve();
-        }, 500);
+        }, duration);
     });
 }
 
@@ -173,7 +237,9 @@ function playSound(color) {
         red: 329.63,    // E4
         blue: 392.00,   // G4
         green: 493.88,  // B4
-        yellow: 523.25  // C5
+        yellow: 523.25, // C5
+        purple: 587.33, // D5
+        orange: 659.25  // E5
     };
 
     oscillator.connect(gainNode);
@@ -475,11 +541,31 @@ function resetGame() {
 
 // モード選択
 elements.singlePlayerBtn.addEventListener('click', () => {
-    startSinglePlayerGame();
+    gameState.isMultiplayer = false;
+    showDifficultySelection();
 });
 
 elements.multiPlayerBtn.addEventListener('click', () => {
-    showPlayerSetup();
+    gameState.isMultiplayer = true;
+    showDifficultySelection();
+});
+
+// 難易度選択
+elements.difficultyButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const difficulty = button.dataset.difficulty;
+        applyDifficulty(difficulty);
+
+        if (gameState.isMultiplayer) {
+            showPlayerSetup();
+        } else {
+            startSinglePlayerGame();
+        }
+    });
+});
+
+elements.backToModeFromDifficultyBtn.addEventListener('click', () => {
+    showModeSelection();
 });
 
 // プレイヤー設定
@@ -490,7 +576,7 @@ elements.startMultiplayerBtn.addEventListener('click', () => {
 });
 
 elements.backToModeBtn.addEventListener('click', () => {
-    showModeSelection();
+    showDifficultySelection();
 });
 
 // ゲーム操作

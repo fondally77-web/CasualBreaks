@@ -30,6 +30,29 @@
             </div>
         </div>
 
+        <!-- 難易度選択画面 -->
+        <div class="difficulty-selection" id="difficultySelection" style="display: none;">
+            <h2>難易度を選択</h2>
+            <div class="difficulty-buttons">
+                <button class="difficulty-btn easy" data-difficulty="easy">
+                    <span class="difficulty-icon">😊</span>
+                    <span class="difficulty-title">イージー</span>
+                    <span class="difficulty-desc">10ラウンド・4色・ゆっくり</span>
+                </button>
+                <button class="difficulty-btn normal" data-difficulty="normal">
+                    <span class="difficulty-icon">🙂</span>
+                    <span class="difficulty-title">ノーマル</span>
+                    <span class="difficulty-desc">15ラウンド・4色・普通</span>
+                </button>
+                <button class="difficulty-btn hard" data-difficulty="hard">
+                    <span class="difficulty-icon">😤</span>
+                    <span class="difficulty-title">ハード</span>
+                    <span class="difficulty-desc">20ラウンド・6色・速い</span>
+                </button>
+            </div>
+            <button class="btn btn-back" id="backToModeFromDifficultyBtn">戻る</button>
+        </div>
+
         <!-- プレイヤー設定画面 -->
         <div class="player-setup" id="playerSetup" style="display: none;">
             <h2>プレイヤー設定</h2>
@@ -76,6 +99,8 @@
                 <button class="color-button blue" data-color="blue"></button>
                 <button class="color-button green" data-color="green"></button>
                 <button class="color-button yellow" data-color="yellow"></button>
+                <button class="color-button purple extra-color" data-color="purple" style="display: none;"></button>
+                <button class="color-button orange extra-color" data-color="orange" style="display: none;"></button>
             </div>
 
             <div class="controls">
