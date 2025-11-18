@@ -177,6 +177,87 @@ function restart() {
     showScreen('start');
 }
 
+// ドラッグ/スワイプ状態
+const dragState = {
+    isDragging: false,
+    startY: 0,
+    currentY: 0,
+    dragThreshold: 50 // ドラッグ距離の閾値
+};
+
+// マウスドラッグ（PC用）
+elements.tissueVisible.addEventListener('mousedown', (e) => {
+    if (!gameState.isPlaying) return;
+    dragState.isDragging = true;
+    dragState.startY = e.clientY;
+    dragState.currentY = e.clientY;
+    elements.tissueVisible.style.cursor = 'grabbing';
+    e.preventDefault();
+});
+
+document.addEventListener('mousemove', (e) => {
+    if (!dragState.isDragging || !gameState.isPlaying) return;
+
+    dragState.currentY = e.clientY;
+    const distance = dragState.startY - dragState.currentY; // 上方向が正
+
+    // ティッシュを動かす視覚効果
+    if (distance > 0 && distance < 100) {
+        elements.tissueVisible.style.transform = `translateY(-${distance}px)`;
+    }
+
+    // 閾値を超えたら引っ張る
+    if (distance >= dragState.dragThreshold) {
+        pullTissue();
+        dragState.isDragging = false;
+        elements.tissueVisible.style.transform = '';
+        elements.tissueVisible.style.cursor = 'grab';
+    }
+});
+
+document.addEventListener('mouseup', () => {
+    if (dragState.isDragging) {
+        dragState.isDragging = false;
+        elements.tissueVisible.style.transform = '';
+        elements.tissueVisible.style.cursor = 'grab';
+    }
+});
+
+// タッチ操作（スマホ用）
+elements.tissueVisible.addEventListener('touchstart', (e) => {
+    if (!gameState.isPlaying) return;
+    dragState.isDragging = true;
+    dragState.startY = e.touches[0].clientY;
+    dragState.currentY = e.touches[0].clientY;
+    e.preventDefault();
+});
+
+document.addEventListener('touchmove', (e) => {
+    if (!dragState.isDragging || !gameState.isPlaying) return;
+
+    dragState.currentY = e.touches[0].clientY;
+    const distance = dragState.startY - dragState.currentY;
+
+    // ティッシュを動かす視覚効果
+    if (distance > 0 && distance < 100) {
+        elements.tissueVisible.style.transform = `translateY(-${distance}px)`;
+    }
+
+    // 閾値を超えたら引っ張る
+    if (distance >= dragState.dragThreshold) {
+        pullTissue();
+        dragState.isDragging = false;
+        elements.tissueVisible.style.transform = '';
+    }
+});
+
+document.addEventListener('touchend', () => {
+    if (dragState.isDragging) {
+        dragState.isDragging = false;
+        elements.tissueVisible.style.transform = '';
+    }
+});
+
 // イベントリスナー設定
 elements.timeButtons.forEach(button => {
     button.addEventListener('click', () => {
@@ -185,9 +266,9 @@ elements.timeButtons.forEach(button => {
     });
 });
 
+// ボタンクリックとスペースキーも残す（バックアップ操作）
 elements.pullBtn.addEventListener('click', pullTissue);
 
-// スペースキーでも引っ張れる
 document.addEventListener('keydown', (e) => {
     if (e.code === 'Space' && gameState.isPlaying) {
         e.preventDefault();
@@ -199,3 +280,6 @@ elements.restartBtn.addEventListener('click', restart);
 
 // 初期表示
 showScreen('start');
+
+// ティッシュにカーソル設定
+elements.tissueVisible.style.cursor = 'grab';

@@ -93,7 +93,7 @@ h1 {
 
 .color-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 15px;
     margin-bottom: 25px;
 }
@@ -148,9 +148,16 @@ h1 {
     background: linear-gradient(135deg, #fab1a0 0%, #ff7675 100%);
 }
 
-/* ハードモード用：6色グリッド */
-.color-grid.hard-mode {
-    grid-template-columns: repeat(3, 1fr);
+.color-button.pink {
+    background: linear-gradient(135deg, #ffeaa7 0%, #fd79a8 100%);
+}
+
+.color-button.cyan {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+}
+
+.color-button.lime {
+    background: linear-gradient(135deg, #55efc4 0%, #00b894 100%);
 }
 
 .color-button.active {

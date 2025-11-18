@@ -2,24 +2,27 @@
 const difficultySettings = {
     easy: {
         maxRounds: 10,
-        colors: ['red', 'blue', 'green', 'yellow'],
+        colors: ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'cyan', 'lime'],
         displayDelay: 1000,
         highlightDuration: 500,
-        betweenDelay: 300
+        betweenDelay: 300,
+        initialSequenceLength: 3
     },
     normal: {
         maxRounds: 15,
-        colors: ['red', 'blue', 'green', 'yellow'],
+        colors: ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'cyan', 'lime'],
         displayDelay: 700,
         highlightDuration: 400,
-        betweenDelay: 200
+        betweenDelay: 200,
+        initialSequenceLength: 3
     },
     hard: {
         maxRounds: 20,
-        colors: ['red', 'blue', 'green', 'yellow', 'purple', 'orange'],
+        colors: ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'cyan', 'lime'],
         displayDelay: 500,
         highlightDuration: 300,
-        betweenDelay: 150
+        betweenDelay: 150,
+        initialSequenceLength: 3
     }
 };
 
@@ -70,7 +73,6 @@ const elements = {
     currentPlayerName: document.getElementById('currentPlayerName'),
     colorGrid: document.getElementById('colorGrid'),
     colorButtons: document.querySelectorAll('.color-button'),
-    extraColors: document.querySelectorAll('.extra-color'),
     startBtn: document.getElementById('startBtn'),
     resetBtn: document.getElementById('resetBtn'),
     message: document.getElementById('message'),
@@ -120,15 +122,7 @@ function applyDifficulty(difficulty) {
 
     gameState.maxRounds = settings.maxRounds;
     gameState.currentColors = settings.colors;
-
-    // ハードモードの場合、追加の色を表示
-    if (difficulty === 'hard') {
-        elements.extraColors.forEach(btn => btn.style.display = 'block');
-        elements.colorGrid.classList.add('hard-mode');
-    } else {
-        elements.extraColors.forEach(btn => btn.style.display = 'none');
-        elements.colorGrid.classList.remove('hard-mode');
-    }
+    // 全ての色は常に表示される（3×3グリッド）
 }
 
 // ===== プレイヤー設定関数 =====
@@ -239,7 +233,10 @@ function playSound(color) {
         green: 493.88,  // B4
         yellow: 523.25, // C5
         purple: 587.33, // D5
-        orange: 659.25  // E5
+        orange: 659.25, // E5
+        pink: 698.46,   // F5
+        cyan: 783.99,   // G5
+        lime: 880.00    // A5
     };
 
     oscillator.connect(gainNode);
@@ -407,7 +404,11 @@ async function startNextPlayerTurn() {
     showMessage('ゲームスタート！', '');
     await sleep(1000);
 
-    addColorToSequence();
+    // 初期シーケンスを設定（3色から開始）
+    const settings = difficultySettings[gameState.difficulty];
+    for (let i = 0; i < settings.initialSequenceLength; i++) {
+        addColorToSequence();
+    }
     await showSequence();
 }
 
@@ -482,7 +483,11 @@ async function startSinglePlayerGame() {
     showMessage('ゲームスタート！', '');
     await sleep(1000);
 
-    addColorToSequence();
+    // 初期シーケンスを設定（3色から開始）
+    const settings = difficultySettings[gameState.difficulty];
+    for (let i = 0; i < settings.initialSequenceLength; i++) {
+        addColorToSequence();
+    }
     await showSequence();
 }
 
@@ -526,7 +531,11 @@ async function startMultiPlayerGame() {
     showMessage('ゲームスタート！', '');
     await sleep(1000);
 
-    addColorToSequence();
+    // 初期シーケンスを設定（3色から開始）
+    const settings = difficultySettings[gameState.difficulty];
+    for (let i = 0; i < settings.initialSequenceLength; i++) {
+        addColorToSequence();
+    }
     await showSequence();
 }
 

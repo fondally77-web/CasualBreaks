@@ -218,6 +218,14 @@ h1 {
     position: relative;
     width: 100%;
     height: 100%;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+}
+
+.tissue-visible:hover .tissue-sheet {
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+    border-color: #667eea;
 }
 
 .tissue-sheet {
@@ -231,7 +239,8 @@ h1 {
     top: -40px;
     left: 50%;
     transform: translateX(-50%);
-    transition: all 0.1s ease;
+    transition: all 0.2s ease;
+    pointer-events: none;
 }
 
 .tissue-sheet::before {
