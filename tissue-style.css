@@ -220,7 +220,7 @@ h1 {
     height: 100%;
     user-select: none;
     -webkit-user-select: none;
-    touch-action: pan-y;
+    touch-action: none;
     cursor: grab;
 }
 

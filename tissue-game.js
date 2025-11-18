@@ -182,7 +182,7 @@ const dragState = {
     isDragging: false,
     startY: 0,
     currentY: 0,
-    dragThreshold: 30 // ドラッグ距離の閾値（モバイル対応で低めに設定）
+    dragThreshold: 50 // ドラッグ距離の閾値（約1cm）
 };
 
 // マウスドラッグ（PC用）
