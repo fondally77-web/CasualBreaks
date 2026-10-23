@@ -415,6 +415,40 @@ h1 {
     box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
 }
 
+/* Keep immediate count/button feedback without decorative movement. */
+@media (prefers-reduced-motion: reduce) {
+    .pull-icon,
+    .tissue-box {
+        animation: none !important;
+    }
+
+    .time-btn,
+    .pull-btn,
+    .btn-restart,
+    .tissue-sheet {
+        transition: none;
+    }
+
+    .time-btn:hover,
+    .pull-btn:hover,
+    .pull-btn:active,
+    .btn-restart:hover {
+        transform: none;
+    }
+
+    .pulled-tissue {
+        top: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        animation: reducedPullFeedback 0.15s ease-out forwards;
+    }
+}
+
+@keyframes reducedPullFeedback {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
 /* レスポンシブ */
 @media (max-width: 480px) {
     .container {

@@ -2,7 +2,7 @@
 const difficultySettings = {
     easy: {
         maxRounds: 10,
-        colors: ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'cyan', 'lime'],
+        colors: ['red', 'blue', 'green', 'yellow'],
         displayDelay: 1000,
         highlightDuration: 500,
         betweenDelay: 300,
@@ -10,7 +10,7 @@ const difficultySettings = {
     },
     normal: {
         maxRounds: 15,
-        colors: ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'cyan', 'lime'],
+        colors: ['red', 'blue', 'green', 'yellow'],
         displayDelay: 700,
         highlightDuration: 400,
         betweenDelay: 200,
@@ -18,7 +18,7 @@ const difficultySettings = {
     },
     hard: {
         maxRounds: 20,
-        colors: ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'cyan', 'lime'],
+        colors: ['red', 'blue', 'green', 'yellow', 'purple', 'orange'],
         displayDelay: 500,
         highlightDuration: 300,
         betweenDelay: 150,
@@ -122,7 +122,11 @@ function applyDifficulty(difficulty) {
 
     gameState.maxRounds = settings.maxRounds;
     gameState.currentColors = settings.colors;
-    // 全ての色は常に表示される（3×3グリッド）
+    elements.colorGrid.style.gridTemplateColumns = `repeat(${settings.colors.length === 4 ? 2 : 3}, 1fr)`;
+    elements.colorButtons.forEach(button => {
+        button.style.display = settings.colors.includes(button.dataset.color) ? '' : 'none';
+    });
+    disableColorButtons(true);
 }
 
 // ===== プレイヤー設定関数 =====
@@ -157,6 +161,7 @@ function saveHighScore() {
         gameState.highScore = gameState.score;
         localStorage.setItem('colorMemoryHighScore', gameState.highScore);
     }
+    updateDisplay();
 }
 
 // 表示の更新
@@ -221,8 +226,11 @@ function highlightButton(color, duration = 500) {
 }
 
 // 効果音の再生（Web Audio API使用）
+let soundAudioContext;
+
 function playSound(color) {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const audioContext = soundAudioContext ||
+        (soundAudioContext = new (window.AudioContext || window.webkitAudioContext)());
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
 
@@ -255,7 +263,7 @@ function playSound(color) {
 // カラーボタンの有効/無効切り替え
 function disableColorButtons(disabled) {
     elements.colorButtons.forEach(btn => {
-        btn.disabled = disabled;
+        btn.disabled = disabled || !gameState.currentColors.includes(btn.dataset.color);
     });
 }
 
@@ -434,13 +442,19 @@ function updateLeaderboard() {
         const rankEmojis = ['🥇', '🥈', '🥉'];
         const rankBadge = index < 3 ? rankEmojis[index] : `${index + 1}位`;
 
-        item.innerHTML = `
-            <div class="player-info">
-                <span class="rank-badge">${rankBadge}</span>
-                <span class="player-name-leaderboard">${player.name}${player.isPlaying ? ' ▶' : ''}</span>
-            </div>
-            <span class="player-score">${player.score}</span>
-        `;
+        const info = document.createElement('div');
+        info.className = 'player-info';
+        const badge = document.createElement('span');
+        badge.className = 'rank-badge';
+        badge.textContent = rankBadge;
+        const name = document.createElement('span');
+        name.className = 'player-name-leaderboard';
+        name.textContent = `${player.name}${player.isPlaying ? ' ▶' : ''}`;
+        const score = document.createElement('span');
+        score.className = 'player-score';
+        score.textContent = player.score;
+        info.append(badge, name);
+        item.append(info, score);
 
         elements.leaderboardList.appendChild(item);
     });
